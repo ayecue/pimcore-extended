@@ -1,11 +1,19 @@
-pimcore-extended
-================
+# pimcore-extended
 
 Added a pack of custom plugins, everything is tested with Pimcore (Version 2.0 - 2.3).
 
+### Content
 
-CdnPlugin
-=========
+* <a href="#cdnplugin">CdnPlugin</a>
+* <a href="#classparser">Classparser</a>
+* <a href="#fxpatcher">FXPatcher</a>
+* <a href="#less">Less</a>
+* <a href="#pageconfigurator">PageConfigurator</a>
+* <a href="#responsiveimages">ResponsiveImages</a>
+* <a href="#wrappedtags">WrappedTags</a>
+
+
+## CdnPlugin
 
 Easy CDN Plugin for Pimcore. Before it's useful you need to install it and configurate these website properties:
 
@@ -14,8 +22,7 @@ Easy CDN Plugin for Pimcore. Before it's useful you need to install it and confi
 * cdnExtensions - Which file extensions should be in the CDN. For example you just want to have images in your cdn then add this string: "png,jpeg,gif"
 
 
-Classparser
-===========
+## Classparser
 
 Plugin to enable user in the CMS to add their own classes to a component. When you install this plugin an Object named "Classhelper" will be automaticly added. This object got two default fields. One mandatory field named "classtag" and one optional field named "description".
 
@@ -56,8 +63,7 @@ Now imagine that you have added three different classes to the classparser like 
 ```
 
 
-FXPatcher
-=========
+## FXPatcher
 
 Allows you to easily patch pimcore JS files. For example:
 ```
@@ -74,16 +80,14 @@ fxpatcher.add({
 Just look at the areablock example in the plugin.
 
 
-Less
-====
+## Less
 
 Basicly it's like the native pimcore integration. I just updated the less.php file to the newest version and I also updated the less.js file the newest.
 
 Also this file uses a website property named "lessPluginPathToLessC" if you got lessc installed on your server.
 
 
-PageConfigurator
-================
+## PageConfigurator
 
 This plugin allows you to create so called "PageConfiguration" objects and also save all properties of your view in one object.
 
@@ -99,16 +103,50 @@ You can use the "PageConfigurator" even without the "PageConfiguration" objects.
 This plugin is useful if you want to write less page properties.
 
 
-ResponsiveImages
-================
+## ResponsiveImages
 
-This plugin add his own implementation of responsive images. (This feature wasn't there in Pimcore < 2.2)
+This plugin add his own implementation of responsive images. (This feature wasn't there in Pimcore < 2.2) Before it's useful you need to install it and configurate these website properties:
 
-Detailed description will be added.
+* responsiveImageScript - The Javascript library you want to use to enable responsive images. From default it's mobify.
+* responsiveImageAttrSelector - To this field you have to add a string which allows the plugin to recognize the image which should be responsive. You could for example use the attribute "data-imgresponsive". Every image with this attribute will get converted to a responsive image.
+* responsiveImageParseAttr - To this field you have to a string. Basicly you can use the same string you used in the "responsiveImageAttrSelector" website property. This field is used to get the data from the right attribute field.
+
+Here an example how to use the responsive image plugin in your script:
+```
+//Json of the responsive images config you need for the plugin to work
+$responsiveImageConfigJson = ResponsiveImages_Helper::createConfigJson(array(
+	array(
+		"percent" => 0.5,
+		"minWidth" => "0px",
+		"maxWidth" => "320px"
+	),
+	array(
+		"percent" => 0.7,
+		"minWidth" => "321px",
+		"maxWidth" => "640px"
+	),
+	array(
+		"percent" => 1,
+		"minWidth" => "641px"
+	)
+));
+//Attribute field name
+$responsiveImageParseAttr = "data-imgresponsive";
+
+//Attribute array
+$attributes = array();
+
+//Apply config to attribute array
+$attributes[$responsiveImageParseAttr] = $responsiveImageConfigJson;
+
+//Output image
+echo $this->image("myImage",array(
+	"attributes" => $attributes
+));
+```
 
 
-WrappedTags
-===========
+## WrappedTags
 
 This plugin wrap all native pimcore tags so that you can easily extend them. To use your extended version just add the suffix "plus" to your tag.
 
