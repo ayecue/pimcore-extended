@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+    <cdnDomain>
+            <data>https://d131c71en3lye7.cloudfront.net</data>
+            <type>text</type>
+            <siteId></siteId>
+    </cdnDomain>
+    <cdnFolders>
+            <data>static,assets</data>
+            <type>text</type>
+            <siteId></siteId>
+    </cdnFolders>
+    <cdnExtensions>
+            <data>png,jpeg,jpg,gif,js,css,html</data>
+            <type>text</type>
+            <siteId></siteId>
+    </cdnExtensions>
+</zend-config>

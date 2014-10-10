@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+    <responsiveImageScript>
+        <data>http://cdn.mobify.com/mobifyjs/build/mobify.min.js</data>
+        <type>text</type>
+        <siteId></siteId>
+    </responsiveImageScript>
+    <responsiveImageAttrSelector>
+        <data>data-imageresponsive-xxx</data>
+        <type>text</type>
+        <siteId></siteId>
+    </responsiveImageAttrSelector>
+    <responsiveImageParseAttr>
+        <data>data-imageresponsive-xxx</data>
+        <type>text</type>
+        <siteId></siteId>
+    </responsiveImageParseAttr>
+</zend-config>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+    <plugin>
+        <pluginName>Less-Plugin</pluginName>
+        <pluginDescription>Actual working Less.</pluginDescription>
+        <pluginNiceName>Less</pluginNiceName>
+        <pluginIcon>/plugins/Less/static/img/icon.png</pluginIcon>
+        <pluginVersion>1.0.0</pluginVersion>
+        <pluginRevision>1</pluginRevision>
+        <pluginBuildTimestamp></pluginBuildTimestamp>
+        <pluginClassName>Less_Plugin</pluginClassName>
+        <pluginIncludePaths>
+            <path>/Less/lib</path>
+        </pluginIncludePaths>
+        <pluginNamespaces>
+            <namespace>Less</namespace>
+        </pluginNamespaces>
+    </plugin>
+</zend-config>
