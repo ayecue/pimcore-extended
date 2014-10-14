@@ -1,314 +1,380 @@
-/**
- * Pimcore
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://www.pimcore.org/license
- *
- * @copyright  Copyright (c) 2009-2014 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     New BSD License
- */
-
 pimcore.registerNS("pimcore.document.tags.blog");
 pimcore.document.tags.blog = Class.create(pimcore.document.tag, {
 
-    initialize: function(id, name, options, data, inherited) {
-
-        this.id = id;
-        this.name = name;
-        this.elements = [];
-        this.options = this.parseOptions(options);
-
-        var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, amountDiv, amountBox;
-        this.elements = Ext.get(id).query("div." + name + "[key]");
-
-
-        var limitReached = false;
-        if(typeof options.limit != "undefined" && this.elements.length >= options.limit) {
-            limitReached = true;
-        }
-
-        if (this.elements.length < 1) {
-            this.createInitalControls();
-        }
-        else {
-            for (var i = 0; i < this.elements.length; i++) {
-                this.elements[i].key = this.elements[i].getAttribute("key");
-
-
-                if(!limitReached) {
-                    // amount selection
-                    amountDiv = Ext.get(this.elements[i]).query(".pimcore_block_amount_" + this.name)[0];
-                    amountBox = new Ext.form.ComboBox({
-                        cls: "pimcore_block_amount_select",
-                        store: this.getAmountValues(),
-                        value: 1,
-                        mode: "local",
-                        triggerAction: "all",
-                        width: 55,
-                        listeners: {
-                            /*"focus": function (el) {
-                                Ext.get(el).addClass("pimcore_tag_block_force_show_buttons");
-                            }.bind(this, this.elements[i]),
-                            "blur": function (el) {
-                                if(this.options["autoHideButtons"] !== false) {
-                                    Ext.get(el).removeClass("pimcore_tag_block_force_show_buttons");
-                                }
-                            }.bind(this, this.elements[i])*/
-                        }
-                    });
-                    amountBox.render(amountDiv);
-
-                    // plus button
-                    plusDiv = Ext.get(this.elements[i]).query(".pimcore_block_plus_" + this.name)[0];
-                    plusButton = new Ext.Button({
-                        cls: "pimcore_block_button_plus",
-                        iconCls: "pimcore_icon_plus",
-                        listeners: {
-                            "click": this.addBlock.bind(this, this.elements[i], amountBox)
-                        }
-                    });
-                    plusButton.render(plusDiv);
-                }
-
-                // minus button
-                minusDiv = Ext.get(this.elements[i]).query(".pimcore_block_minus_" + this.name)[0];
-                minusButton = new Ext.Button({
-                    cls: "pimcore_block_button_minus",
-                    iconCls: "pimcore_icon_minus",
-                    listeners: {
-                        "click": this.removeBlock.bind(this, this.elements[i])
-                    }
-                });
-                minusButton.render(minusDiv);
-
-                // up button
-                upDiv = Ext.get(this.elements[i]).query(".pimcore_block_up_" + this.name)[0];
-                upButton = new Ext.Button({
-                    cls: "pimcore_block_button_up",
-                    iconCls: "pimcore_icon_up",
-                    listeners: {
-                        "click": this.moveBlockUp.bind(this, this.elements[i])
-                    }
-                });
-                upButton.render(upDiv);
-
-                // up button
-                downDiv = Ext.get(this.elements[i]).query(".pimcore_block_down_" + this.name)[0];
-                downButton = new Ext.Button({
-                    cls: "pimcore_block_button_down",
-                    iconCls: "pimcore_icon_down",
-                    listeners: {
-                        "click": this.moveBlockDown.bind(this, this.elements[i])
-                    }
-                });
-                downButton.render(downDiv);
-
-                /*if(options["autoHideButtons"] !== false) {
-                    Ext.get(this.elements[i]).on("mouseenter", function () {
-                        Ext.get(this.query(".pimcore_block_buttons")[0]).show();
-                    });
-                    Ext.get(this.elements[i]).on("mouseleave", function () {
-                        Ext.get(this.query(".pimcore_block_buttons")[0]).hide();
-                    });
-                }
-                */
-            }
-        }
+    getType: function () {
+        return "blog";
     },
 
-    setInherited: function ($super, inherited) {
-        var elements = Ext.get(this.id).query(".pimcore_block_buttons_" + this.name);
-        if(elements.length > 0) {
-            for(var i=0; i<elements.length; i++) {
-                $super(inherited, Ext.get(elements[i]));
-            }
-        }
+    getParentType: function () {
+        return "object";
     },
 
-    getAmountValues: function () {
-        var amountValues = [];
-
-        if(typeof this.options.limit != "undefined") {
-            var maxAddValues = intval(this.options.limit) - this.elements.length;
-            if(maxAddValues > 10) {
-                maxAddValues = 10;
-            }
-            for (var a=1; a<=maxAddValues; a++) {
-                amountValues.push(a);
-            }
-        }
-
-        if(amountValues.length < 1) {
-            amountValues = [1,2,3,4,5,6,7,8,9,10];
-        }
-
-        return amountValues;
+    getBlogPostSubType : function () {
+        return "BlogPost";
     },
 
-    createInitalControls: function (amountValues) {
-        var amountEl = document.createElement("div");
-        amountEl.setAttribute("class", "pimcore_block_amount pimcore_block_amount_" + this.name);
+    initialize: function (id, name, options, data, inherited) {
+        var me = this;
 
-        var plusEl = document.createElement("div");
-        plusEl.setAttribute("class", "pimcore_block_plus pimcore_block_plus_" + this.name);
+        me.id = id;
+        me.name = name;
+        me.data = data;
+        me.options = me.parseOptions(options);
 
-        var clearEl = document.createElement("div");
-        clearEl.setAttribute("class", "pimcore_block_clear");
+        this.setupWrapper();
 
-        Ext.get(this.id).appendChild(amountEl);
-        Ext.get(this.id).appendChild(plusEl);
-        Ext.get(this.id).appendChild(clearEl);
-
-        // amount selection
-        var amountBox = new Ext.form.ComboBox({
-            cls: "pimcore_block_amount_select",
-            store: this.getAmountValues(),
-            mode: "local",
-            triggerAction: "all",
-            value: 1,
-            width: 55
+        me.store = new Ext.data.ArrayStore({
+            data: me.data.blogPosts,
+            fields: [
+                "id",
+                "path",
+                "name"
+            ]
         });
-        amountBox.render(amountEl);
 
-        // plus button
-        var plusButton = new Ext.Button({
-            cls: "pimcore_block_button_plus",
-            iconCls: "pimcore_icon_plus",
-            listeners: {
-                "click": this.addBlock.bind(this, null, amountBox)
+        var elementConfig = {
+            store: me.store,
+            bodyStyle: "color:#000",
+            sm: new Ext.grid.RowSelectionModel({
+                singleSelect:true
+            }),
+            colModel: new Ext.grid.ColumnModel({
+                defaults: {
+                    sortable: false
+                },
+                columns: [
+                    {
+                        header: 'ID', 
+                        dataIndex: 'id', 
+                        width: 50
+                    },
+                    {
+                        id: "path", 
+                        header: t("path"), 
+                        dataIndex: 'path', 
+                        width: 200
+                    },
+                    {
+                        header: t("name"), 
+                        dataIndex: 'name', 
+                        width: 100
+                    },
+                    {
+                        xtype:'actioncolumn',
+                        width:30,
+                        items:[
+                            {
+                                tooltip:t('up'),
+                                icon:"/pimcore/static/img/icon/arrow_up.png",
+                                handler: me.moveBlogPostUp.bind(me)
+                            }
+                        ]
+                    },
+                    {
+                        xtype:'actioncolumn',
+                        width:30,
+                        items:[
+                            {
+                                tooltip: t('down'),
+                                icon: "/pimcore/static/img/icon/arrow_down.png",
+                                handler: me.moveBlogPostDown.bind(me)
+                            }
+                        ]
+                    },
+                    {
+                        xtype: 'actioncolumn',
+                        width: 30,
+                        items: [{
+                            tooltip: t('open'),
+                            icon: "/pimcore/static/img/icon/pencil_go.png",
+                            handler: me.openBlogPost.bind(me)
+                        }]
+                    },
+                    {
+                        xtype: 'actioncolumn',
+                        width: 30,
+                        items: [{
+                            tooltip: t('remove'),
+                            icon: "/pimcore/static/img/icon/cross.png",
+                            handler: me.removeBlogPost.bind(me)
+                        }]
+                    }
+                ]
+            }),
+            autoExpandColumn: 'path',
+            tbar: {
+                items: [
+                    {
+                        xtype: "tbspacer",
+                        width: 20,
+                        height: 16,
+                        cls: "pimcore_icon_droptarget"
+                    },
+                    {
+                        xtype: "tbtext",
+                        text: "<b>" + (me.options.title || "") + "</b>"
+                    },
+                    "->",
+                    {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_add",
+                        handler: me.openCreateEditor.bind(me)
+                    },
+                    {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_delete",
+                        handler: me.empty.bind(me)
+                    },
+                    {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_search",
+                        handler: me.openSearchEditor.bind(me)
+                    }
+                ]
+            }
+        };
+
+        // height specifics
+        if(typeof me.options.height != "undefined") {
+            elementConfig.height = me.options.height;
+        } else {
+            elementConfig.autoHeight = true;
+        }
+
+        // width specifics
+        if(typeof me.options.width != "undefined") {
+            elementConfig.width = me.options.width;
+        }
+
+        me.element = new Ext.grid.GridPanel(elementConfig);
+
+        me.element.on("rowcontextmenu", me.onRowContextmenu.bind(me));
+        me.element.reference = this;
+
+        me.element.on("render", function (el) {
+            // register at global DnD manager
+            dndManager.addDropTarget(me.element.getEl(),
+                me.onNodeOver.bind(this),
+                me.onNodeDrop.bind(this)
+            );
+        }.bind(this));
+
+        me.element.render(id);
+    },
+
+    onNodeOver: function(target, dd, e, data) {
+        var me = this;
+
+        if (me.droppingAllowed(data)) {
+            return Ext.dd.DropZone.prototype.dropAllowed;
+        } else {
+            return Ext.dd.DropZone.prototype.dropNotAllowed;
+        }
+    },
+
+    onNodeDrop: function (target, dd, e, data) {
+        var me = this;
+
+        if (me.droppingAllowed(data)) {
+            if(data["grid"] && data["grid"] == me.component) {
+                var rowIndex = me.component.getView().findRowIndex(e.target);
+
+                if(rowIndex !== false) {
+                    me.moveBlogPostTo(data.rowIndex,rowIndex);
+                }
+            } else {
+                var attributes = data.node.attributes,
+                    initData = {
+                        id: attributes.id,
+                        path: attributes.path,
+                        name: attributes.text
+                    };
+
+                // check for existing element
+                if (!me.blogPostAlreadyExists(initData.id, initData.name)) {
+                    me.store.add(
+                        new me.store.recordType(initData, me.store.getCount() + 1)
+                    );
+
+                    return true;
+                }
+            }
+
+            return false;
+        } else {
+            return false;
+        }
+    },
+
+    onRowContextmenu: function (grid, rowIndex, event) {
+        var me = this,
+            menu = new Ext.menu.Menu();
+
+        menu.add(new Ext.menu.Item({
+            text: t('remove'),
+            iconCls: "pimcore_icon_delete",
+            handler: function (item) {
+                item.parentMenu.destroy();
+                me.removeBlogPost(grid,rowIndex);
+            }
+        }));
+
+        menu.add(new Ext.menu.Item({
+            text: t('open'),
+            iconCls: "pimcore_icon_open",
+            handler: function (data, item) {
+                item.parentMenu.destroy();
+                me.openBlogPost(grid,rowIndex);
+            }
+        }));
+
+        menu.add(new Ext.menu.Item({
+            text: t('search'),
+            iconCls: "pimcore_icon_search",
+            handler: function (item) {
+                item.parentMenu.destroy();
+                me.openSearchEditor();
+            }
+        }));
+
+        event.stopEvent();
+        menu.showAt(event.getXY());
+    },
+
+    openSearchEditor: function () {
+        var me = this;
+
+        pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(me), {
+            type: [me.getParentType()],
+            subtype: {
+                object: [me.getParentType()]
+            },
+            specific : {
+                classes : [me.getBlogPostSubType()]
             }
         });
-        plusButton.render(plusEl);
-        
-        Ext.get(this.id).addClass("pimcore_block_limitnotreached");
     },
 
-    addBlock : function (element, amountbox) {
+    blogPostAlreadyExists: function (id, name) {
+        var me = this,
+            store = me.store;
 
-        var index = this.getElementIndex(element) + 1;
-        var amount = 1;
-
-        // get amount of new blocks
-        try {
-            amount = amountbox.getValue();
-        }
-        catch (e) {
-        }
-
-        if (intval(amount) < 1) {
-            amount = 1;
-        }
-
-        // get next higher key
-        var nextKey = 0;
-        var currentKey;
-
-        for (var i = 0; i < this.elements.length; i++) {
-            currentKey = intval(this.elements[i].key);
-            if (currentKey > nextKey) {
-                nextKey = currentKey;
+        // check for existing element
+        var result = store.queryBy(function (id, type, record, rid) {
+            if (record.get('id') == id && record.get('name') == name) {
+                return true;
             }
+            return false;
+        }.bind(me, id, name));
+
+        if (result.length < 1) {
+            return false;
         }
 
-        var args = [index, 0];
-
-        for (var p = 0; p < amount; p++) {
-            nextKey++;
-            args.push({key: nextKey});
-        }
-
-       this.elements.splice.apply(this.elements, args);
-
-        //this.elements.splice(index, 0, {key: nextKey});
-
-        this.reloadDocument();
+        return true;
     },
 
-    removeBlock: function (element) {
+    addDataFromSelector: function (items) {
+        var me = this;
 
-        var index = this.getElementIndex(element);
+        if (items.length > 0) {
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
 
-        this.elements.splice(index, 1);
-        Ext.get(element).remove();
-
-        // there is no existing block element anymore
-        if (this.elements.length < 1) {
-            this.createInitalControls();
-        }
-
-        // this is necessary because of the limit which is only applied when initializing
-        //Even though reload is not necessary after remove, some sites change their appearance
-        //according to the amount of block elements they contain and this arose the need for reload anyway
-        this.reloadDocument();
-    },
-
-    moveBlockDown: function (element) {
-
-        var index = this.getElementIndex(element);
-
-        if (index < (this.elements.length-1)) {
-            var x = this.elements[index];
-            var y = this.elements[index + 1];
-
-            this.elements[index + 1] = x;
-            this.elements[index] = y;
-
-            this.reloadDocument();
-
-        }
-    },
-
-    moveBlockUp: function (element) {
-
-        var index = this.getElementIndex(element);
-
-        if (index > 0) {
-            var x = this.elements[index];
-            var y = this.elements[index - 1];
-
-            this.elements[index - 1] = x;
-            this.elements[index] = y;
-
-            this.reloadDocument();
-        }
-    },
-
-    getElementIndex: function (element) {
-
-        try {
-            var key = Ext.get(element).dom.key;
-            for (var i = 0; i < this.elements.length; i++) {
-                if (this.elements[i].key == key) {
-                    var index = i;
-                    break;
+                if (!this.blogPostAlreadyExists(item.id, item.text)) {
+                    me.store.add(new me.store.recordType({
+                        id: item.id,
+                        path: item.fullpath,
+                        name: item.text
+                    }, me.store.getCount() + 1));
                 }
             }
         }
-        catch (e) {
-            return 0;
-        }
+    },
 
-        return index;
+    empty: function () {
+        this.store.removeAll();
     },
 
     getValue: function () {
-        var data = [];
-        for (var i = 0; i < this.elements.length; i++) {
-            if (this.elements[i]) {
-                if (this.elements[i].key) {
-                    data.push(this.elements[i].key);
-                }
-            }
+        var me = this,
+            tmData = [],
+            data = me.store.queryBy(function(record, id) {
+                return true;
+            });
+
+        for (var i = 0; i < data.items.length; i++) {
+            tmData.push(data.items[i].data);
         }
 
-        return data;
+        return {
+            rssActive : me.data.rssActive,
+            blogPostIds : tmData
+        };
     },
 
-    getType: function () {
-        return "blog";
+    sourceIsTreeNode: function (source) {
+        try {
+            if (source.node) {
+                return true;
+            }
+        } catch (e) {
+            return false;
+        }
+        return false;
+    },
+
+    droppingAllowed: function(data) {
+        var me = this;
+
+        // check if data is a treenode, if not check if the source is the same grid because of the reordering
+        if (!me.sourceIsTreeNode(data)) {
+            if(data["grid"] && data["grid"] == me.component) {
+                return true;
+            }
+            return false;
+        }
+
+        var attributes = data.node.attributes,
+            type = attributes.elementType,
+            subType = attributes.className;
+
+        return type == me.getParentType() && subType == me.getBlogPostSubType();
+
+    },
+
+    moveBlogPostTo : function(blogPostIdx,moveToIdx){
+        var me = this,
+            store = me.store;
+
+        if (rowIndex > 0 && rowIndex < store.getCount() - 1) {
+            var rec = store.getAt(blogPostIdx);
+
+            store.removeAt(blogPostIdx);
+            store.insert(moveToIdx, [rec]);
+        }
+    },
+
+    moveBlogPostUp : function(grid, rowIndex){
+        this.moveBlogPostTo(rowIndex, rowIndex - 1);
+    },
+
+    moveBlogPostDown : function(grid, rowIndex){
+        this.moveBlogPostTo(rowIndex, rowIndex + 1);
+    },
+
+    openCreateEditor : function(){
+
+    },
+
+    openBlogPost : function(grid, rowIndex){
+
+    },
+
+    removeBlogPost : function(grid, rowIndex){
+        var me = this,
+            store = me.store;
+
+        store.removeAt(rowIndex);
     }
 });

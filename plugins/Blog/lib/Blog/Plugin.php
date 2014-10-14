@@ -7,7 +7,13 @@ class Blog_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_API_Plu
      * @return string
      */
     public static function install(){
-		return "Plugin successfully installed.";
+        $success = Blog_Install_Classes::installAll();
+
+        if ($success && self::isInstalled()) {
+            return "Plugin successfully installed.";
+        } else {
+            return "Plugin failed to install.";
+        }
 	}
 
 	/**
@@ -15,7 +21,13 @@ class Blog_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_API_Plu
      * @return string
      */
 	public static function uninstall() {
-        return "Plugin successfully uninstalled.";
+        $success = Blog_Install_Classes::uninstallAll();
+
+        if ($success && !self::isInstalled()) {
+            return "Plugin successfully uninstalled.";
+        } else {
+            return "Plugin failed to uninstall.";
+        }
     }
 
     /**
@@ -23,7 +35,7 @@ class Blog_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_API_Plu
      * @return boolean
      */
 	public static function isInstalled(){
-		return true;
+		return Blog_Install_Classes::haveAll();
 	}
 }
 

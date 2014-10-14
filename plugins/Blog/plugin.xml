@@ -17,7 +17,7 @@
             <namespace>Blog</namespace>
         </pluginNamespaces>
         <pluginDocumentEditmodeJsPaths>
-
+            <path>/Blog/static/js/pimcore/document/tags/blog.js</path>
         </pluginDocumentEditmodeJsPaths>
     </plugin>
 </zend-config>
