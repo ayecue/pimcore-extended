@@ -1,23 +1,23 @@
 <?php
 
-class Blog_Install_Classes extends Blog_Install {
+class Blog_Install_Classes extends Blog_Install_Abstract {
 
     /**
      * @see Blog_Install_Classes::installAll
      * @return boolean
      */
-    static public function installAll() {
-        return self::installBlogPost() && self::installBlogCategory();
+    public function installAll() {
+        return self::haveAll() || (self::installBlogPost() && self::installBlogCategory());
     }
 
     /**
      * @see Blog_Install_Classes::installBlogPost
      * @return boolean
      */
-    static public function installBlogPost() {
+    public function installBlogPost() {
     	$classname = Blog_Config::getBlogPostClassName();
         $pathToJson = Blog_Config::getBlogPostClassJsonPath();
-        $success = Blog_Install::createClassByJson($classname,$pathToJson);
+        $success = $this->createClassByJson($classname,$pathToJson);
 
         return $succes;
     }
@@ -26,10 +26,10 @@ class Blog_Install_Classes extends Blog_Install {
      * @see Blog_Install_Classes::installBlogCategory
      * @return boolean
      */
-    static public function installBlogCategory() {
+    public function installBlogCategory() {
     	$classname = Blog_Config::getBlogCategoryClassName();
         $pathToJson = Blog_Config::getBlogCategoryClassJsonPath();
-        $success = Blog_Install::createClassByJson($classname,$pathToJson);
+        $success = $this->createClassByJson($classname,$pathToJson);
 
         return $succes;
     }
@@ -38,17 +38,17 @@ class Blog_Install_Classes extends Blog_Install {
      * @see Blog_Install_Classes::uninstallAll
      * @return boolean
      */
-    static public function uninstallAll() {
-        return self::uninstallBlogPost() && self::uninstallBlogCategory();
+    public function uninstallAll() {
+        return self::haveAll() && self::uninstallBlogPost() && self::uninstallBlogCategory();
     }
 
     /**
      * @see Blog_Install_Classes::uninstallBlogPost
      * @return boolean
      */
-    static public function uninstallBlogPost() {
+    public function uninstallBlogPost() {
     	$classname = Blog_Config::getBlogPostClassName();
-        $success = Blog_Install::removeClass($classname);
+        $success = $this->removeClass($classname);
 
         return $succes;
     }
@@ -57,9 +57,9 @@ class Blog_Install_Classes extends Blog_Install {
      * @see Blog_Install_Classes::uninstallBlogCategory
      * @return boolean
      */
-    static public function uninstallBlogCategory() {
+    public function uninstallBlogCategory() {
     	$classname = Blog_Config::getBlogCategoryClassName();
-        $success = Blog_Install::removeClass($classname);
+        $success = $this->removeClass($classname);
 
         return $succes;
     }
@@ -68,7 +68,7 @@ class Blog_Install_Classes extends Blog_Install {
      * @see Blog_Install_Classes::haveAll
      * @return boolean
      */
-    static public function haveAll() {
+    public function haveAll() {
         return self::hasBlogPost() && self::hasBlogCategory();
     }
 
@@ -76,9 +76,9 @@ class Blog_Install_Classes extends Blog_Install {
      * @see Blog_Install_Classes::hasBlogPost
      * @return boolean
      */
-    static public function hasBlogPost() {
+    public function hasBlogPost() {
     	$classname = Blog_Config::getBlogPostClassName();
-        $success = Blog_Install::hasClass($classname);
+        $success = $this->hasClass($classname);
 
         return $success;
     }
@@ -87,9 +87,9 @@ class Blog_Install_Classes extends Blog_Install {
      * @see Blog_Install_Classes::hasBlogCategory
      * @return boolean
      */
-    static public function hasBlogCategory() {
+    public function hasBlogCategory() {
     	$classname = Blog_Config::getBlogCategoryClassName();
-        $success = Blog_Install::hasClass($classname);
+        $success = $this->hasClass($classname);
 
         return $success;
     }

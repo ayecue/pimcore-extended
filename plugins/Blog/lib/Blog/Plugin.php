@@ -2,12 +2,27 @@
 
 class Blog_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_API_Plugin_Interface {
     
+    public static $installer = NULL;
+
+    public static function setInstaller(){
+        if (empty(self::$installer)) {
+            self::$installer = new Blog_Install();
+        }
+        return self;
+    }
+
+    public static function getInstaller(){
+        self::setInstaller();
+        return self::$installer;
+    }
+
 	/**
      * @see Blog_Plugin::install
      * @return string
      */
     public static function install(){
-        $success = Blog_Install_Classes::installAll();
+        $installer = self::getInstaller();
+        $success = $installer->install();
 
         if ($success && self::isInstalled()) {
             return "Plugin successfully installed.";
@@ -21,7 +36,8 @@ class Blog_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_API_Plu
      * @return string
      */
 	public static function uninstall() {
-        $success = Blog_Install_Classes::uninstallAll();
+        $installer = self::getInstaller();
+        $success = $installer->uninstall();
 
         if ($success && !self::isInstalled()) {
             return "Plugin successfully uninstalled.";
@@ -35,7 +51,9 @@ class Blog_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_API_Plu
      * @return boolean
      */
 	public static function isInstalled(){
-		return Blog_Install_Classes::haveAll();
+        $installer = self::getInstaller();
+
+		return $installer->installed();
 	}
 }
 

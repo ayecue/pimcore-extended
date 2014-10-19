@@ -34,5 +34,30 @@ class Blog_Config {
         return "BlogCategory";
     }
 
+    /**
+     * @see Blog_Config::getInstallSQLFilePath
+     * @return string
+     */
+    static public function getInstallSQLFilePath() {
+        return PIMCORE_PLUGINS_PATH . "/Blog/install/install.sql";
+    }
+
+    /**
+     * @see Blog_Config::getUninstallSQLFilePath
+     * @return string
+     */
+    static public function getUninstallSQLFilePath() {
+        return PIMCORE_PLUGINS_PATH . "/Blog/install/uninstall.sql";
+    }
+
+    /**
+     * @see Blog_Config::getDatabaseTables
+     * @return string
+     */
+    static public function getDatabaseTables() {
+        return array(
+            'blog_references'
+        );
+    }
 }
 

@@ -2,59 +2,29 @@
 
 class Blog_Install {
 
-    /**
-     * @see Blog_Install::createClassByJson
-     * @param string $classname, string $pathToJson
-     * @return boolean
-     */
-    static public function createClassByJson($classname,$pathToJson) {
-        $json = file_get_contents($pathToJson);
+    public $classInstaller = NULL;
+    public $sqlInstaller = NULL;
 
-        try {
-            $class = Object_Class::create();
-            $class->setName($classname);
-            $class->save();
-        } catch (Exception $e) {
-            return false;
-        }
-
-        try {
-            Object_Class_Service::importClassDefinitionFromJson($class,$json);
-        } catch (Exception $e) {
-            $class->delete();
-
-            return false;
-        }
-
-        return true;
+    public function __construct() {
+        $this->classInstaller = new Blog_Install_Classes();
+        $this->sqlInstaller = new Blog_Install_SQL();
     }
 
-    /**
-     * @see Blog_Install::removeClass
-     * @param string $classname
-     * @return boolean
-     */
-    static public function removeClass($classname) {
-         try {
-            $class = Object_Class::getByName($classname);
-
-            if ($class) {
-                $class->delete();
-            }
-        } catch (Exception $e) {
-            return false;
-        }
-
-        return true;
+    public function install(){
+        return 
+            $this->classInstaller->installAll() &&
+            $this->sqlInstaller->installAll();
     }
 
-    /**
-     * @see Blog_Install::hasClass
-     * @param string $classname
-     * @return boolean
-     */
-    static public function hasClass($classname) {
-        return class_exists("Object_$classname") && Object_Class::getByName($classname);
+    public function uninstall(){
+        return 
+            $this->classInstaller->uninstallAll() &&
+            $this->sqlInstaller->uninstallAll();
     }
 
+    public function installed(){
+        return 
+            $this->classInstaller->haveAll() &&
+            $this->sqlInstaller->haveAll();
+    }
 }
