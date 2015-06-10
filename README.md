@@ -2,6 +2,17 @@
 
 Added a pack of custom plugins, everything is tested with Pimcore (Version 2.0 - 2.3).
 
+**Recently I moved all the plugins in own repositories and fixed certain parts of it so it works with Pimcore 3.0:**
+
+* <a href="https://github.com/ayecue/PimcoreCdn">CdnPlugin for Pimcore 3.0</a>
+* <a href="https://github.com/ayecue/Classparser">Classparser for Pimcore 3.0</a>
+* <a href="https://github.com/ayecue/FxPatcher">FXPatcher for Pimcore 3.0</a>
+* <a href="https://github.com/ayecue/CustomLess">Less for Pimcore 3.0</a>
+* <a href="https://github.com/ayecue/PageConfigurator">PageConfigurator for Pimcore 3.0</a>
+* <a href="https://github.com/ayecue/ResponsiveImages">ResponsiveImages for Pimcore 3.0</a>
+* <a href="https://github.com/ayecue/WrapperTags">WrappedTags for Pimcore 3.0</a>
+
+
 ### Content
 
 * <a href="#cdnplugin">CdnPlugin</a>
